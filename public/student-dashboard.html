@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>M&amp;M — Student Dashboard</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: "#0F172A",
+              teal: "#00685F",
+              tealLight: "#E6F4F1",
+              tealHover: "#00554E",
+              mintBg: "#F0F7F5",
+              mintSubtle: "#F4FAF8",
+              border: "#E2ECE9",
+              muted: "#5B6E6A"
+            }
+          },
+          fontFamily: {
+            sans: ["Manrope", "sans-serif"],
+            serif: ["Newsreader", "serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      background-color: #F0F7F5;
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#F0F7F5] text-[#0F172A]">
+  <!-- Top Navigation Header -->
+  <header class="w-full px-6 lg:px-12 py-4 flex items-center justify-between border-b border-[#00685F]/10 bg-[#F0F7F5]/90 backdrop-blur-md sticky top-0 z-30">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-[#00685F] text-white flex items-center justify-center font-bold text-sm tracking-tight shadow-sm shadow-[#00685F]/20">
+        M&amp;M
+      </div>
+      <div>
+        <h1 class="text-sm font-bold tracking-tight text-[#0F172A] leading-tight">M&amp;M Student Portal</h1>
+        <p class="text-xs text-[#5B6E6A] font-medium leading-tight" id="header-student-meta">Computer Science &amp; Engineering</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden sm:flex items-center gap-3 px-3 py-1.5 rounded-full bg-white border border-[#00685F]/15">
+        <img id="user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80" alt="Avatar" class="w-7 h-7 rounded-full object-cover"/>
+        <div class="text-left">
+          <p class="text-xs font-bold leading-tight" id="user-name">Loading...</p>
+          <p class="text-[10px] text-[#5B6E6A] leading-tight" id="user-roll">Roll: ---</p>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-[#5B6E6A] hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all flex items-center gap-1.5 cursor-pointer">
+        <span class="material-symbols-outlined text-[16px]">logout</span>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-6 py-8 space-y-8">
+    <!-- Welcome Greeting & Quick Actions -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white rounded-3xl p-6 lg:p-8 border border-[#E2ECE9] shadow-[0_4px_24px_-4px_rgba(15,23,42,0.04)]">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8F5F2] text-[11px] font-semibold text-[#00685F] mb-3">
+          <span class="material-symbols-outlined text-[14px]">school</span>
+          <span id="badge-term">Semester 6 • Section A</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-serif font-medium text-[#0F172A]" id="welcome-title">Welcome back, Scholar</h2>
+        <p class="text-xs sm:text-sm text-[#5B6E6A] mt-1">Review your mentorship milestones, faculty feedback, and upcoming review sessions.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="openRequestMeetingModal()" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#00685F] text-white hover:bg-[#00554E] transition-all flex items-center gap-2 shadow-sm shadow-[#00685F]/20 cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">calendar_add_on</span>
+          <span>Request Mentor Session</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Academic KPI Metrics Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- Card 1: CGPA -->
+      <div class="bg-white rounded-2xl p-6 border border-[#E2ECE9] shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-[#5B6E6A] mb-3">
+          <span class="text-xs font-semibold uppercase tracking-wider">Cumulative GPA</span>
+          <span class="material-symbols-outlined text-[20px] text-[#00685F]">grade</span>
+        </div>
+        <div>
+          <div class="text-3xl font-bold text-[#0F172A]" id="kpi-cgpa">--</div>
+          <p class="text-xs text-emerald-600 font-medium mt-1">Top 15% of cohort</p>
+        </div>
+      </div>
+
+      <!-- Card 2: Attendance -->
+      <div class="bg-white rounded-2xl p-6 border border-[#E2ECE9] shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-[#5B6E6A] mb-3">
+          <span class="text-xs font-semibold uppercase tracking-wider">Overall Attendance</span>
+          <span class="material-symbols-outlined text-[20px] text-[#00685F]">co_present</span>
+        </div>
+        <div>
+          <div class="text-3xl font-bold text-[#0F172A]" id="kpi-attendance">--%</div>
+          <div class="w-full bg-[#E8F5F2] h-2 rounded-full mt-2 overflow-hidden">
+            <div id="kpi-attendance-bar" class="bg-[#00685F] h-full rounded-full" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Active Mentor -->
+      <div class="bg-white rounded-2xl p-6 border border-[#E2ECE9] shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-[#5B6E6A] mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider">Assigned Faculty Mentor</span>
+          <span class="material-symbols-outlined text-[20px] text-[#00685F]">person</span>
+        </div>
+        <div>
+          <div class="text-base font-bold text-[#0F172A] truncate" id="mentor-name">--</div>
+          <p class="text-xs text-[#5B6E6A] truncate" id="mentor-office">--</p>
+        </div>
+      </div>
+
+      <!-- Card 4: Next Session -->
+      <div class="bg-white rounded-2xl p-6 border border-[#E2ECE9] shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-[#5B6E6A] mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider">Next Mentorship</span>
+          <span class="material-symbols-outlined text-[20px] text-[#00685F]">event_upcoming</span>
+        </div>
+        <div>
+          <div class="text-base font-bold text-[#0F172A]" id="next-meeting-date">--</div>
+          <p class="text-xs text-[#5B6E6A]" id="next-meeting-mode">No pending sessions</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Split: Meetings History vs Milestones/Goals -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Left Column: Mentorship Meeting Logs -->
+      <div class="lg:col-span-7 space-y-5">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xl font-serif font-medium text-[#0F172A] flex items-center gap-2">
+            <span>Mentorship Sessions &amp; Reviews</span>
+          </h3>
+          <span class="text-xs font-semibold text-[#5B6E6A]" id="meetings-count-badge">0 Sessions</span>
+        </div>
+
+        <div id="meetings-list" class="space-y-4">
+          <!-- Dynamic meeting cards injected here -->
+          <div class="p-8 text-center text-xs text-[#5B6E6A] bg-white rounded-2xl border border-[#E2ECE9]">
+            Loading mentorship logs...
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Goals, Action Items & Mentor Info -->
+      <div class="lg:col-span-5 space-y-6">
+        <!-- Mentor Card Details -->
+        <div class="bg-white rounded-3xl p-6 border border-[#E2ECE9] shadow-sm">
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-[#5B6E6A] mb-4">Mentor Contact &amp; Office</h4>
+          <div class="flex items-center gap-4 mb-4">
+            <img id="mentor-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80" alt="Mentor" class="w-14 h-14 rounded-2xl object-cover border border-[#D5E4E0]"/>
+            <div>
+              <p class="text-sm font-bold text-[#0F172A]" id="mentor-card-name">--</p>
+              <p class="text-xs text-[#5B6E6A]" id="mentor-card-desig">Associate Professor</p>
+              <p class="text-xs text-[#00685F] font-medium" id="mentor-card-email">--</p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-[#F2F7F5] flex items-center justify-between text-xs text-[#5B6E6A]">
+            <span class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px] text-[#00685F]">room</span>
+              <span id="mentor-card-room">--</span>
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px] text-[#00685F]">phone</span>
+              <span id="mentor-card-phone">--</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Academic Milestones Tracker -->
+        <div class="bg-white rounded-3xl p-6 border border-[#E2ECE9] shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-[#5B6E6A]">Milestones &amp; Action Items</h4>
+            <button onclick="openAddMilestoneModal()" class="text-xs font-semibold text-[#00685F] hover:underline flex items-center gap-1 cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">add</span>
+              <span>Add Goal</span>
+            </button>
+          </div>
+          <div id="milestones-list" class="space-y-3">
+            <!-- Dynamic milestones injected here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal: Request Mentorship Session -->
+  <div id="meeting-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-[#E2ECE9] shadow-2xl relative">
+      <button onclick="closeMeetingModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div class="w-12 h-12 rounded-2xl bg-[#E8F5F2] text-[#00685F] flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-[24px]">event</span>
+      </div>
+      <h3 class="text-xl font-serif font-medium text-[#0F172A] mb-1">Request Mentorship Review</h3>
+      <p class="text-xs text-[#5B6E6A] mb-5">Propose an agenda and suitable slot for your advisor.</p>
+
+      <form onsubmit="event.preventDefault(); submitMeetingRequest();" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#0F172A] mb-1">Session Title / Topic</label>
+          <input id="req-title" required placeholder="e.g. Capstone Phase 1 Review &amp; Grade Discussion" class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none"/>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-[#0F172A] mb-1">Preferred Date</label>
+            <input id="req-date" type="date" required class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#0F172A] mb-1">Preferred Time</label>
+            <input id="req-time" type="text" placeholder="e.g. 02:30 PM" required class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#0F172A] mb-1">Discussion Agenda &amp; Questions</label>
+          <textarea id="req-agenda" rows="3" required placeholder="Outline specific topics, questions, or challenges you'd like to address..." class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none"></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeMeetingModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-[#5B6E6A] hover:bg-gray-100 transition-colors">Cancel</button>
+          <button type="submit" id="submit-req-btn" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#00685F] text-white hover:bg-[#00554E] transition-colors">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Academic Goal -->
+  <div id="goal-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-[#E2ECE9] shadow-2xl relative">
+      <button onclick="closeGoalModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <h3 class="text-xl font-serif font-medium text-[#0F172A] mb-1">New Academic Goal</h3>
+      <p class="text-xs text-[#5B6E6A] mb-5">Set a milestone to review with your mentor.</p>
+
+      <form onsubmit="event.preventDefault(); submitNewGoal();" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#0F172A] mb-1">Milestone Title</label>
+          <input id="goal-title" required placeholder="e.g. Complete AWS Cloud Certificate" class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#0F172A] mb-1">Target Deadline</label>
+          <input id="goal-deadline" type="date" required class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none"/>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeGoalModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-[#5B6E6A] hover:bg-gray-100 transition-colors">Cancel</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#00685F] text-white hover:bg-[#00554E] transition-colors">Add Goal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('mm_token') || sessionStorage.getItem('mm_token');
+    if (!token) {
+      window.location.href = '/index.html';
+    }
+
+    async function loadDashboard() {
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success || data.user.role !== 'Student') {
+          handleLogout();
+          return;
+        }
+
+        const student = data.user;
+        renderStudentData(student);
+      } catch (err) {
+        console.error('Failed to load student profile:', err);
+      }
+    }
+
+    function renderStudentData(student) {
+      document.getElementById('user-name').innerText = student.name;
+      document.getElementById('user-roll').innerText = `Roll: ${student.rollNo}`;
+      document.getElementById('header-student-meta').innerText = `${student.department} • Sem ${student.semester}`;
+      document.getElementById('welcome-title').innerText = `Welcome back, ${student.name.split(' ')[0]}`;
+      document.getElementById('badge-term').innerText = `Semester ${student.semester} • Section ${student.section}`;
+      if (student.avatar) document.getElementById('user-avatar').src = student.avatar;
+
+      // KPIs
+      document.getElementById('kpi-cgpa').innerText = Number(student.cgpa).toFixed(2);
+      document.getElementById('kpi-attendance').innerText = `${Number(student.attendance).toFixed(1)}%`;
+      document.getElementById('kpi-attendance-bar').style.width = `${student.attendance}%`;
+
+      // Mentor details
+      if (student.mentor) {
+        document.getElementById('mentor-name').innerText = student.mentor.name;
+        document.getElementById('mentor-office').innerText = student.mentor.officeRoom || 'Faculty Room';
+        document.getElementById('mentor-card-name').innerText = student.mentor.name;
+        document.getElementById('mentor-card-desig').innerText = student.mentor.designation;
+        document.getElementById('mentor-card-email').innerText = student.mentor.email;
+        document.getElementById('mentor-card-room').innerText = student.mentor.officeRoom || 'Room 402';
+        document.getElementById('mentor-card-phone').innerText = student.mentor.phone || '+91 98112 33445';
+        if (student.mentor.avatar) document.getElementById('mentor-avatar').src = student.mentor.avatar;
+      }
+
+      // Meetings
+      const meetings = student.meetings || [];
+      document.getElementById('meetings-count-badge').innerText = `${meetings.length} Total Sessions`;
+
+      const upcoming = meetings.find(m => m.status === 'Scheduled');
+      if (upcoming) {
+        document.getElementById('next-meeting-date').innerText = `${upcoming.scheduledDate}`;
+        document.getElementById('next-meeting-mode').innerText = `${upcoming.scheduledTime} • ${upcoming.mode}`;
+      }
+
+      renderMeetings(meetings);
+      renderMilestones(student.milestones || []);
+    }
+
+    function renderMeetings(meetings) {
+      const container = document.getElementById('meetings-list');
+      if (!meetings.length) {
+        container.innerHTML = `
+          <div class="p-8 text-center bg-white rounded-2xl border border-[#E2ECE9] text-xs text-[#5B6E6A]">
+            No mentorship meetings logged yet. Click "Request Mentor Session" to schedule your first meeting!
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = meetings.map(m => `
+        <div class="bg-white rounded-2xl p-6 border border-[#E2ECE9] shadow-sm space-y-3">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
+                m.status === 'Completed' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
+              }">
+                <span class="w-1.5 h-1.5 rounded-full ${m.status === 'Completed' ? 'bg-emerald-600' : 'bg-amber-500'}"></span>
+                ${m.status}
+              </span>
+              <h4 class="text-base font-serif font-medium text-[#0F172A] mt-2">${m.title}</h4>
+              <p class="text-xs text-[#5B6E6A] flex items-center gap-2 mt-1">
+                <span class="material-symbols-outlined text-[14px]">event</span> ${m.scheduledDate} at ${m.scheduledTime}
+                <span>•</span>
+                <span class="material-symbols-outlined text-[14px]">location_on</span> ${m.mode}
+              </p>
+            </div>
+          </div>
+          <div class="bg-[#F0F7F5] rounded-xl p-3.5 text-xs text-[#0F172A] space-y-2 border border-[#E2ECE9]">
+            <p><span class="font-bold text-[#00685F]">Agenda:</span> ${m.agenda || 'General Academic Mentorship'}</p>
+            ${m.notes ? `<p><span class="font-bold text-[#00685F]">Mentor Notes:</span> ${m.notes}</p>` : ''}
+            ${m.actionItems && m.actionItems.length ? `
+              <div class="pt-2 border-t border-[#D5E4E0]">
+                <p class="font-bold text-[#00685F] mb-1">Action Items:</p>
+                <ul class="list-disc list-inside space-y-0.5 text-[#5B6E6A]">
+                  ${m.actionItems.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderMilestones(milestones) {
+      const container = document.getElementById('milestones-list');
+      if (!milestones.length) {
+        container.innerHTML = `<p class="text-xs text-[#5B6E6A] py-3">No milestones set. Click "Add Goal" to set targets.</p>`;
+        return;
+      }
+
+      container.innerHTML = milestones.map(ms => `
+        <div class="p-3.5 rounded-xl border border-[#E2ECE9] bg-[#FAFCFB] flex flex-col gap-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-semibold text-[#0F172A]">${ms.title}</span>
+            <span class="text-[10px] font-bold text-[#00685F]">${ms.progress || 0}%</span>
+          </div>
+          <div class="w-full bg-[#E8F5F2] h-1.5 rounded-full overflow-hidden">
+            <div class="bg-[#00685F] h-full rounded-full" style="width: ${ms.progress || 0}%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-[#5B6E6A]">
+            <span>Deadline: ${ms.deadline}</span>
+            <span class="px-2 py-0.5 rounded-full bg-white border border-[#D5E4E0]">${ms.status}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Meeting modal handlers
+    function openRequestMeetingModal() {
+      document.getElementById('meeting-modal').classList.remove('hidden');
+      document.getElementById('meeting-modal').classList.add('flex');
+    }
+    function closeMeetingModal() {
+      document.getElementById('meeting-modal').classList.add('hidden');
+      document.getElementById('meeting-modal').classList.remove('flex');
+    }
+
+    async function submitMeetingRequest() {
+      const title = document.getElementById('req-title').value;
+      const scheduledDate = document.getElementById('req-date').value;
+      const scheduledTime = document.getElementById('req-time').value;
+      const agenda = document.getElementById('req-agenda').value;
+
+      try {
+        const res = await fetch('/api/students/meetings/request', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ title, scheduledDate, scheduledTime, agenda })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closeMeetingModal();
+          loadDashboard();
+        } else {
+          alert(data.message || 'Error submitting request');
+        }
+      } catch (err) {
+        alert('Network error while requesting meeting.');
+      }
+    }
+
+    // Goal modal handlers
+    function openAddMilestoneModal() {
+      document.getElementById('goal-modal').classList.remove('hidden');
+      document.getElementById('goal-modal').classList.add('flex');
+    }
+    function closeGoalModal() {
+      document.getElementById('goal-modal').classList.add('hidden');
+      document.getElementById('goal-modal').classList.remove('flex');
+    }
+
+    async function submitNewGoal() {
+      const title = document.getElementById('goal-title').value;
+      const deadline = document.getElementById('goal-deadline').value;
+
+      try {
+        const res = await fetch('/api/students/milestones', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ title, deadline })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closeGoalModal();
+          loadDashboard();
+        } else {
+          alert(data.message || 'Error creating milestone');
+        }
+      } catch (err) {
+        alert('Network error while adding goal.');
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('mm_token');
+      localStorage.removeItem('mm_user');
+      sessionStorage.removeItem('mm_token');
+      sessionStorage.removeItem('mm_user');
+      window.location.href = '/index.html';
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>

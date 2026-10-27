@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>M&amp;M — Faculty &amp; Mentor Portal</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: "#0F172A",
+              teal: "#00685F",
+              tealLight: "#E6F4F1",
+              tealHover: "#00554E",
+              mintBg: "#F0F7F5",
+              mintSubtle: "#F4FAF8",
+              border: "#E2ECE9",
+              muted: "#5B6E6A"
+            }
+          },
+          fontFamily: {
+            sans: ["Manrope", "sans-serif"],
+            serif: ["Newsreader", "serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      background-color: #F0F7F5;
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#F0F7F5] text-[#0F172A]">
+  <!-- Top Navigation Header -->
+  <header class="w-full px-6 lg:px-12 py-4 flex items-center justify-between border-b border-[#00685F]/10 bg-[#F0F7F5]/90 backdrop-blur-md sticky top-0 z-30">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-[#00685F] text-white flex items-center justify-center font-bold text-sm tracking-tight shadow-sm shadow-[#00685F]/20">
+        M&amp;M
+      </div>
+      <div>
+        <h1 class="text-sm font-bold tracking-tight text-[#0F172A] leading-tight">Faculty &amp; Mentor Portal</h1>
+        <p class="text-xs text-[#5B6E6A] font-medium leading-tight" id="header-faculty-dept">Department of Computer Science &amp; Engineering</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden sm:flex items-center gap-3 px-3 py-1.5 rounded-full bg-white border border-[#00685F]/15">
+        <img id="faculty-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80" alt="Avatar" class="w-7 h-7 rounded-full object-cover"/>
+        <div class="text-left">
+          <p class="text-xs font-bold leading-tight" id="faculty-name">Dr. Rajesh Sharma</p>
+          <p class="text-[10px] text-[#5B6E6A] leading-tight" id="faculty-id">ID: FAC-CS-101</p>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-[#5B6E6A] hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all flex items-center gap-1.5 cursor-pointer">
+        <span class="material-symbols-outlined text-[16px]">logout</span>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-6 py-8 space-y-8">
+    <!-- Welcome Greeting & Quick Actions -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white rounded-3xl p-6 lg:p-8 border border-[#E2ECE9] shadow-[0_4px_24px_-4px_rgba(15,23,42,0.04)]">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8F5F2] text-[11px] font-semibold text-[#00685F] mb-3">
+          <span class="material-symbols-outlined text-[14px]">verified</span>
+          <span id="badge-faculty-desig">Associate Professor &amp; Senior Mentor</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-serif font-medium text-[#0F172A]" id="welcome-faculty-title">Welcome, Dr. Sharma</h2>
+        <p class="text-xs sm:text-sm text-[#5B6E6A] mt-1">Track student cohorts, identify at-risk scholars, and record mentorship milestones.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="openLogMeetingModal()" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#00685F] text-white hover:bg-[#00554E] transition-all flex items-center gap-2 shadow-sm shadow-[#00685F]/20 cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">post_add</span>
+          <span>Log Mentorship Session</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Faculty KPI Summary -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bg-white rounded-2xl p-6 border border-[#E2ECE9] shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-[#5B6E6A] mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider">Assigned Mentees</span>
+          <span class="material-symbols-outlined text-[20px] text-[#00685F]">groups</span>
+        </div>
+        <div>
+          <div class="text-3xl font-bold text-[#0F172A]" id="kpi-total-mentees">0</div>
+          <p class="text-xs text-[#5B6E6A] mt-1">Active scholar cohort</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 border border-[#E2ECE9] shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-[#5B6E6A] mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider">Cohort Avg. Attendance</span>
+          <span class="material-symbols-outlined text-[20px] text-[#00685F]">co_present</span>
+        </div>
+        <div>
+          <div class="text-3xl font-bold text-[#0F172A]" id="kpi-avg-attendance">--%</div>
+          <p class="text-xs text-emerald-600 font-medium mt-1">Department benchmark > 75%</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 border border-[#E2ECE9] shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-[#5B6E6A] mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider">At-Risk Scholars</span>
+          <span class="material-symbols-outlined text-[20px] text-amber-600">warning</span>
+        </div>
+        <div>
+          <div class="text-3xl font-bold text-amber-600" id="kpi-at-risk">0</div>
+          <p class="text-xs text-amber-700 font-medium mt-1">Requires immediate review</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 border border-[#E2ECE9] shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-[#5B6E6A] mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider">Upcoming Sessions</span>
+          <span class="material-symbols-outlined text-[20px] text-[#00685F]">schedule</span>
+        </div>
+        <div>
+          <div class="text-3xl font-bold text-[#0F172A]" id="kpi-upcoming">0</div>
+          <p class="text-xs text-[#5B6E6A] mt-1">Scheduled for this month</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mentees Cohort Table -->
+    <div class="bg-white rounded-3xl border border-[#E2ECE9] shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-[#F2F7F5] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-xl font-serif font-medium text-[#0F172A]">Assigned Mentees Roster</h3>
+          <p class="text-xs text-[#5B6E6A]">Comprehensive academic status for each scholar in your assigned group.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold text-[#5B6E6A]">Cohort:</span>
+          <span class="text-xs font-bold text-[#00685F] bg-[#E8F5F2] px-3 py-1 rounded-full">CSE 2026</span>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-[#FAFCFB] border-b border-[#E2ECE9] text-[11px] font-bold uppercase tracking-wider text-[#5B6E6A]">
+              <th class="py-3.5 px-6">Scholar</th>
+              <th class="py-3.5 px-4">Roll Number</th>
+              <th class="py-3.5 px-4">Semester</th>
+              <th class="py-3.5 px-4">CGPA</th>
+              <th class="py-3.5 px-4">Attendance</th>
+              <th class="py-3.5 px-4">Academic Status</th>
+              <th class="py-3.5 px-6 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="mentees-table-body" class="text-xs divide-y divide-[#F2F7F5]">
+            <!-- Dynamic Mentee rows injected here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mentorship Session Logs -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#E2ECE9] shadow-sm space-y-5">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-serif font-medium text-[#0F172A]">Recent Mentorship Sessions &amp; Action Notes</h3>
+        <span class="text-xs font-semibold text-[#5B6E6A]" id="faculty-meetings-count">0 Recorded</span>
+      </div>
+      <div id="faculty-meetings-list" class="space-y-4">
+        <!-- Dynamic meeting cards injected here -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal: Log Mentorship Meeting -->
+  <div id="log-meeting-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-[#E2ECE9] shadow-2xl relative">
+      <button onclick="closeLogMeetingModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div class="w-12 h-12 rounded-2xl bg-[#E8F5F2] text-[#00685F] flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-[24px]">assignment_add</span>
+      </div>
+      <h3 class="text-xl font-serif font-medium text-[#0F172A] mb-1">Log Mentorship Session</h3>
+      <p class="text-xs text-[#5B6E6A] mb-5">Record discussion points, mentor remarks, and assigned student deliverables.</p>
+
+      <form onsubmit="event.preventDefault(); submitLogMeeting();" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#0F172A] mb-1">Select Mentee</label>
+          <select id="log-student-select" required class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none bg-white">
+            <!-- Dynamic student options -->
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#0F172A] mb-1">Session Title / Topic</label>
+          <input id="log-title" required placeholder="e.g. Mid-Term Review &amp; Attendance Counseling" class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none"/>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-[#0F172A] mb-1">Date</label>
+            <input id="log-date" type="date" required class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-[#0F172A] mb-1">Status</label>
+            <select id="log-status" class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none bg-white">
+              <option value="Completed">Completed</option>
+              <option value="Scheduled">Scheduled</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#0F172A] mb-1">Mentor Observations &amp; Advice</label>
+          <textarea id="log-notes" rows="2" placeholder="Record student progress, concerns, and academic advice..." class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#0F172A] mb-1">Action Items (comma-separated)</label>
+          <input id="log-actions" placeholder="e.g. Submit lab logbook by Friday, Attend remedial tutorial" class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none"/>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeLogMeetingModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-[#5B6E6A] hover:bg-gray-100 transition-colors">Cancel</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#00685F] text-white hover:bg-[#00554E] transition-colors">Save Session Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('mm_token') || sessionStorage.getItem('mm_token');
+    if (!token) {
+      window.location.href = '/index.html';
+    }
+
+    let menteesCache = [];
+
+    async function loadFacultyDashboard() {
+      try {
+        const [statsRes, menteesRes, profileRes] = await Promise.all([
+          fetch('/api/faculty/stats', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/faculty/mentees', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
+
+        const statsData = await statsRes.json();
+        const menteesData = await menteesRes.json();
+        const profileData = await profileRes.json();
+
+        if (!profileRes.ok || profileData.user.role !== 'Faculty') {
+          handleLogout();
+          return;
+        }
+
+        renderFacultyProfile(profileData.user, statsData.data, menteesData.data);
+      } catch (err) {
+        console.error('Failed to load faculty portal data:', err);
+      }
+    }
+
+    function renderFacultyProfile(faculty, stats, mentees) {
+      document.getElementById('faculty-name').innerText = faculty.name;
+      document.getElementById('faculty-id').innerText = `ID: ${faculty.facultyId || 'FAC-101'}`;
+      document.getElementById('header-faculty-dept').innerText = faculty.department;
+      document.getElementById('welcome-faculty-title').innerText = `Welcome, ${faculty.name}`;
+      document.getElementById('badge-faculty-desig').innerText = faculty.designation;
+      if (faculty.avatar) document.getElementById('faculty-avatar').src = faculty.avatar;
+
+      // Stats
+      if (stats) {
+        document.getElementById('kpi-total-mentees').innerText = stats.totalMentees;
+        document.getElementById('kpi-avg-attendance').innerText = `${stats.avgAttendance}%`;
+        document.getElementById('kpi-at-risk').innerText = stats.atRiskCount;
+        document.getElementById('kpi-upcoming').innerText = stats.upcomingMeetings;
+      }
+
+      menteesCache = mentees || [];
+      renderMenteesTable(menteesCache);
+      renderFacultyMeetings(faculty.meetings || []);
+      populateStudentSelect(menteesCache);
+    }
+
+    function renderMenteesTable(mentees) {
+      const tbody = document.getElementById('mentees-table-body');
+      if (!mentees.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-[#5B6E6A]">No mentees assigned.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = mentees.map(m => `
+        <tr class="hover:bg-[#F8FCFA] transition-colors">
+          <td class="py-4 px-6">
+            <div class="flex items-center gap-3">
+              <img src="${m.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80'}" class="w-8 h-8 rounded-full object-cover border border-[#D5E4E0]" alt="${m.name}"/>
+              <div>
+                <p class="font-bold text-[#0F172A]">${m.name}</p>
+                <p class="text-[11px] text-[#5B6E6A]">${m.email}</p>
+              </div>
+            </div>
+          </td>
+          <td class="py-4 px-4 font-mono font-medium text-[#0F172A]">${m.rollNo}</td>
+          <td class="py-4 px-4 font-medium">Sem ${m.semester} (${m.section})</td>
+          <td class="py-4 px-4 font-bold text-[#0F172A]">${Number(m.cgpa).toFixed(2)}</td>
+          <td class="py-4 px-4">
+            <span class="font-bold ${m.attendance < 75 ? 'text-amber-600' : 'text-emerald-700'}">${Number(m.attendance).toFixed(1)}%</span>
+          </td>
+          <td class="py-4 px-4">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
+              m.isAtRisk ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+            }">
+              <span class="w-1.5 h-1.5 rounded-full ${m.isAtRisk ? 'bg-amber-500' : 'bg-emerald-600'}"></span>
+              ${m.riskReason}
+            </span>
+          </td>
+          <td class="py-4 px-6 text-right">
+            <button onclick="quickLogForStudent('${m.id}')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#E8F5F2] text-[#00685F] hover:bg-[#00685F] hover:text-white transition-colors cursor-pointer">
+              Log Session
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderFacultyMeetings(meetings) {
+      const container = document.getElementById('faculty-meetings-list');
+      document.getElementById('faculty-meetings-count').innerText = `${meetings.length} Recorded`;
+
+      if (!meetings.length) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-[#5B6E6A] bg-[#FAFCFB] rounded-2xl border border-[#E2ECE9]">No sessions recorded yet.</div>`;
+        return;
+      }
+
+      container.innerHTML = meetings.map(m => `
+        <div class="bg-[#FAFCFB] rounded-2xl p-5 border border-[#E2ECE9] space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
+              m.status === 'Completed' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
+            }">
+              ${m.status}
+            </span>
+            <span class="text-xs text-[#5B6E6A]">${m.scheduledDate} • ${m.scheduledTime || '12:00 PM'}</span>
+          </div>
+          <h4 class="text-sm font-bold text-[#0F172A]">${m.title}</h4>
+          <p class="text-xs text-[#5B6E6A]">${m.notes || m.agenda}</p>
+          ${m.actionItems && m.actionItems.length ? `
+            <div class="pt-2 text-xs">
+              <span class="font-bold text-[#00685F]">Action Items:</span>
+              <span class="text-[#5B6E6A] ml-1">${m.actionItems.join('; ')}</span>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function populateStudentSelect(mentees) {
+      const sel = document.getElementById('log-student-select');
+      sel.innerHTML = mentees.map(m => `
+        <option value="${m.id}">${m.name} (${m.rollNo})</option>
+      `).join('');
+    }
+
+    function quickLogForStudent(studentId) {
+      document.getElementById('log-student-select').value = studentId;
+      openLogMeetingModal();
+    }
+
+    function openLogMeetingModal() {
+      document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('log-meeting-modal').classList.remove('hidden');
+      document.getElementById('log-meeting-modal').classList.add('flex');
+    }
+    function closeLogMeetingModal() {
+      document.getElementById('log-meeting-modal').classList.add('hidden');
+      document.getElementById('log-meeting-modal').classList.remove('flex');
+    }
+
+    async function submitLogMeeting() {
+      const studentId = document.getElementById('log-student-select').value;
+      const title = document.getElementById('log-title').value;
+      const scheduledDate = document.getElementById('log-date').value;
+      const status = document.getElementById('log-status').value;
+      const notes = document.getElementById('log-notes').value;
+      const rawActions = document.getElementById('log-actions').value;
+      const actionItems = rawActions ? rawActions.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+      try {
+        const res = await fetch('/api/faculty/meetings/log', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ studentId, title, scheduledDate, status, notes, actionItems })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closeLogMeetingModal();
+          loadFacultyDashboard();
+        } else {
+          alert(data.message || 'Error recording session');
+        }
+      } catch (err) {
+        alert('Network error while saving session record.');
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('mm_token');
+      localStorage.removeItem('mm_user');
+      sessionStorage.removeItem('mm_token');
+      sessionStorage.removeItem('mm_user');
+      window.location.href = '/index.html';
+    }
+
+    loadFacultyDashboard();
+  </script>
+</body>
+</html>

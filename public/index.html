@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="web_standard" name="shell-type"/>
+  <title>M&amp;M — Mentor–Mentee System</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: "#0F172A",
+              teal: "#00685F",
+              tealLight: "#E6F4F1",
+              tealHover: "#00554E",
+              mintBg: "#F0F7F5",
+              mintSubtle: "#F4FAF8",
+              border: "#E2ECE9",
+              muted: "#5B6E6A"
+            }
+          },
+          fontFamily: {
+            sans: ["Manrope", "sans-serif"],
+            serif: ["Newsreader", "serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      background-color: #F0F7F5;
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#F0F7F5] text-[#0F172A] relative selection:bg-[#00685F]/10 selection:text-[#00685F]">
+  <!-- Soft Ambient Glows -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute -top-[20%] left-1/2 -translate-x-1/2 w-[700px] h-[550px] bg-gradient-to-b from-[#D8EFE9]/60 via-[#E4F5F1]/30 to-transparent rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-[450px] h-[450px] bg-[#E2F3EE]/40 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="relative z-10 w-full px-6 lg:px-12 py-5 flex items-center justify-between border-b border-[#00685F]/10 bg-[#F0F7F5]/80 backdrop-blur-md">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="showView('roles')">
+      <div class="w-10 h-10 rounded-xl bg-[#00685F] text-white flex items-center justify-center font-bold text-sm tracking-tight shadow-sm shadow-[#00685F]/20">
+        M&amp;M
+      </div>
+      <div class="flex flex-col">
+        <span class="text-sm font-bold tracking-tight text-[#0F172A] leading-tight">M&amp;M</span>
+        <span class="text-xs text-[#5B6E6A] font-medium leading-tight">Mentor–Mentee System</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-6">
+      <button class="text-xs font-semibold text-[#5B6E6A] hover:text-[#00685F] transition-colors flex items-center gap-1.5 py-1.5 px-3 rounded-full hover:bg-white/80" onclick="openSupportModal()">
+        <span class="material-symbols-outlined text-[16px]">help_outline</span>
+        <span>Support &amp; Help</span>
+      </button>
+      <div class="w-px h-4 bg-[#D1E2DE]"></div>
+      <div class="flex items-center gap-2 text-xs font-medium text-[#5B6E6A]">
+        <span class="w-2 h-2 rounded-full bg-[#00685F]/60"></span>
+        <span>Campus Portal</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 lg:py-16 max-w-6xl mx-auto w-full">
+    <!-- View Switcher & Quick Navigation Bar -->
+    <div class="w-full max-w-5xl mb-6 flex items-center justify-between">
+      <div class="inline-flex p-1 bg-white/70 backdrop-blur-md rounded-full border border-[#00685F]/15 shadow-sm">
+        <button class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 bg-[#00685F] text-white shadow-sm flex items-center gap-1.5" id="nav-btn-roles" onclick="showView('roles')">
+          <span class="material-symbols-outlined text-[15px]">grid_view</span>
+          <span>Role Selection</span>
+        </button>
+        <button class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 text-[#5B6E6A] hover:text-[#00685F] flex items-center gap-1.5" id="nav-btn-login" onclick="showView('login', 'Student')">
+          <span class="material-symbols-outlined text-[15px]">login</span>
+          <span>Direct Sign In</span>
+        </button>
+      </div>
+      <div class="hidden items-center gap-2 text-xs font-medium text-[#00685F] bg-[#E8F5F2] px-3.5 py-1.5 rounded-full border border-[#00685F]/20" id="active-role-badge">
+        <span class="w-2 h-2 rounded-full bg-[#00685F] animate-pulse"></span>
+        <span id="active-role-text">Student View</span>
+      </div>
+    </div>
+
+    <!-- VIEW 1: Welcome & Role Selection -->
+    <section class="w-full flex flex-col items-center justify-center transition-all duration-300" id="view-role-selection">
+      <!-- Welcome Header -->
+      <div class="text-center max-w-2xl mx-auto mb-12 lg:mb-14">
+        <h1 class="text-4xl sm:text-5xl lg:text-[44px] font-serif font-medium tracking-tight text-[#0F172A] mb-3">
+          Welcome to M&amp;M
+        </h1>
+        <p class="text-base sm:text-lg text-[#5B6E6A] font-normal leading-relaxed mb-8">
+          Your academic progress, all in one place.
+        </p>
+        <div class="inline-flex items-center">
+          <span class="text-[11px] font-semibold tracking-widest uppercase text-[#00685F] bg-[#00685F]/8 px-4 py-1.5 rounded-full border border-[#00685F]/15">
+            Continue as
+          </span>
+        </div>
+      </div>
+
+      <!-- 2 Role Selection Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 w-full max-w-5xl">
+        <!-- Card 1: Student -->
+        <div class="group relative flex flex-col justify-between bg-white rounded-3xl p-8 lg:p-9 border border-[#E2ECE9] shadow-[0_4px_24px_-4px_rgba(15,23,42,0.04)] hover:shadow-[0_16px_36px_-6px_rgba(0,104,95,0.12)] hover:border-[#00685F]/40 hover:-translate-y-1.5 transition-all duration-300 cursor-pointer" onclick="showView('login', 'Student')">
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-[#E8F5F2] text-[#00685F] flex items-center justify-center mb-7 group-hover:bg-[#00685F] group-hover:text-white transition-colors duration-300">
+              <span class="material-symbols-outlined text-[28px]">school</span>
+            </div>
+            <h2 class="text-2xl font-serif font-medium text-[#0F172A] mb-1.5 group-hover:text-[#00685F] transition-colors">
+              Student
+            </h2>
+            <p class="text-sm font-medium text-[#5B6E6A]">
+              Learners &amp; Scholars
+            </p>
+          </div>
+          <div class="pt-8 flex items-center justify-between border-t border-[#F2F7F5] mt-8">
+            <span class="text-xs font-semibold text-[#5B6E6A] group-hover:text-[#00685F] transition-colors">
+              Access Dashboard
+            </span>
+            <div class="w-10 h-10 rounded-full bg-[#F2F7F5] text-[#00685F] flex items-center justify-center group-hover:bg-[#00685F] group-hover:text-white group-hover:translate-x-1 transition-all duration-300 shadow-sm">
+              <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Faculty -->
+        <div class="group relative flex flex-col justify-between bg-white rounded-3xl p-8 lg:p-9 border border-[#E2ECE9] shadow-[0_4px_24px_-4px_rgba(15,23,42,0.04)] hover:shadow-[0_16px_36px_-6px_rgba(0,104,95,0.12)] hover:border-[#00685F]/40 hover:-translate-y-1.5 transition-all duration-300 cursor-pointer" onclick="showView('login', 'Faculty')">
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-[#E8F5F2] text-[#00685F] flex items-center justify-center mb-7 group-hover:bg-[#00685F] group-hover:text-white transition-colors duration-300">
+              <span class="material-symbols-outlined text-[28px]">supervisor_account</span>
+            </div>
+            <h2 class="text-2xl font-serif font-medium text-[#0F172A] mb-1.5 group-hover:text-[#00685F] transition-colors">
+              Faculty
+            </h2>
+            <p class="text-sm font-medium text-[#5B6E6A]">
+              Mentors &amp; Advisors
+            </p>
+          </div>
+          <div class="pt-8 flex items-center justify-between border-t border-[#F2F7F5] mt-8">
+            <span class="text-xs font-semibold text-[#5B6E6A] group-hover:text-[#00685F] transition-colors">
+              Access Dashboard
+            </span>
+            <div class="w-10 h-10 rounded-full bg-[#F2F7F5] text-[#00685F] flex items-center justify-center group-hover:bg-[#00685F] group-hover:text-white group-hover:translate-x-1 transition-all duration-300 shadow-sm">
+              <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: Split-Screen Login -->
+    <section class="w-full max-w-5xl hidden flex-col transition-all duration-300" id="view-split-login">
+      <!-- Back Navigation link -->
+      <div class="mb-4">
+        <button class="inline-flex items-center gap-2 text-xs font-semibold text-[#5B6E6A] hover:text-[#00685F] transition-colors py-1.5 px-3 rounded-lg hover:bg-white/60" onclick="showView('roles')">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          <span>Back to role selection</span>
+        </button>
+      </div>
+
+      <!-- Main Split Card -->
+      <div class="bg-white rounded-3xl border border-[#E2ECE9] shadow-[0_12px_40px_-8px_rgba(15,23,42,0.06)] overflow-hidden grid grid-cols-1 md:grid-cols-12">
+        <!-- Left Side: Artwork & Philosophy -->
+        <div class="md:col-span-5 bg-gradient-to-b from-[#EAF5F2] to-[#F3F9F7] p-8 lg:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#E2ECE9] relative overflow-hidden">
+          <div class="relative z-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-[#00685F]/15 text-[11px] font-semibold text-[#00685F] mb-6 backdrop-blur-sm">
+              <span class="material-symbols-outlined text-[14px]">verified</span>
+              <span>Academic Growth Platform</span>
+            </div>
+            <h3 class="text-2xl lg:text-3xl font-serif font-medium text-[#0F172A] leading-snug mb-3">
+              Nurturing potential through purposeful mentorship.
+            </h3>
+            <p class="text-xs text-[#5B6E6A] leading-relaxed">
+              Seamless progress tracking, milestones, and constructive guidance for every scholar and advisor.
+            </p>
+          </div>
+
+          <!-- High Quality Knowledge Tree Vector Illustration -->
+          <div class="relative my-6 flex items-center justify-center">
+            <div class="w-full rounded-2xl overflow-hidden shadow-sm border border-[#00685F]/10 bg-white/40">
+              <img alt="Tree of Knowledge Mentorship Illustration" class="w-full h-auto object-cover transform hover:scale-[1.02] transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AEtjO1UG1_3Zwu6x-C9RUo_ahFzlxaBhjKtsrOaWdgSnaeLY_RbSSN2BlOyHZ3L7smkSusO_jVValOKEYSErTaD8auIfdb5311H5YkuYOaRqmv4GZA2MYNN8AsgyaiMUN8A35dleCfskXBf6MurzyFEUf144eerB1NBssiLEOSBUIdRXGioAQ8WQogcKS6ktj72hetu-FAaa2GxHQ2hifISMs0BFhemua_uQ_nTPWY6LmHB64MxjC6Rock1Y0Q"/>
+            </div>
+          </div>
+
+          <!-- Quote / Micro Stat -->
+          <div class="relative z-10 pt-4 border-t border-[#00685F]/10 flex items-center justify-between text-[11px] text-[#5B6E6A]">
+            <span class="flex items-center gap-1.5 font-medium">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#00685F]"></span>
+              Live Academic Session 2026
+            </span>
+            <span class="font-semibold text-[#00685F]">Spring Semester</span>
+          </div>
+        </div>
+
+        <!-- Right Side: Adaptive Login Form -->
+        <div class="md:col-span-7 p-8 lg:p-12 flex flex-col justify-between bg-white">
+          <div>
+            <!-- Interactive Role Switcher Tabs inside View 2 -->
+            <div class="flex items-center justify-between mb-8 pb-4 border-b border-[#F2F7F5]">
+              <span class="text-xs font-semibold text-[#5B6E6A] uppercase tracking-wider">Select Role</span>
+              <div class="inline-flex p-1 bg-[#F0F7F5] rounded-xl border border-[#D5E4E0]">
+                <button class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 bg-[#00685F] text-white shadow-sm" id="tab-student" onclick="switchRole('Student')">
+                  Student
+                </button>
+                <button class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 text-[#5B6E6A] hover:text-[#00685F]" id="tab-faculty" onclick="switchRole('Faculty')">
+                  Faculty
+                </button>
+              </div>
+            </div>
+
+            <!-- Header and dynamic badge -->
+            <div class="mb-6">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-xl bg-[#E8F5F2] text-[#00685F] flex items-center justify-center" id="login-role-icon-box">
+                  <span class="material-symbols-outlined text-[22px]" id="login-role-icon">school</span>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-serif font-medium text-[#0F172A]" id="login-heading">
+                    Student Sign In
+                  </h2>
+                  <p class="text-xs text-[#5B6E6A]" id="login-subheading">
+                    Enter your credentials to access your academic records.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Alert Box for Error / Success message -->
+            <div id="login-alert-box" class="hidden mb-5 p-3.5 rounded-xl text-xs font-medium border items-center gap-2.5">
+              <span class="material-symbols-outlined text-[18px]" id="login-alert-icon">info</span>
+              <span id="login-alert-message" class="flex-1"></span>
+            </div>
+
+            <!-- Form Fields -->
+            <form class="space-y-5" onsubmit="event.preventDefault(); submitLogin();">
+              <div>
+                <label class="block text-xs font-semibold text-[#0F172A] mb-1.5" id="login-id-label">
+                  University Roll No. or College Email
+                </label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined text-[18px] text-[#5B6E6A] absolute left-3.5 pointer-events-none">badge</span>
+                  <input class="w-full text-sm pl-10 pr-4 py-3 rounded-xl border border-[#D5E4E0] bg-[#FAFCFB] focus:outline-none focus:border-[#00685F] focus:ring-1 focus:ring-[#00685F] text-[#0F172A] placeholder:text-slate-400 font-medium transition-all" id="login-id-input" placeholder="e.g. 1CR21CS042 or student@college.edu" required="" type="text" value="1CR21CS042"/>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-xs font-semibold text-[#0F172A]">Password</label>
+                  <button type="button" class="text-[11px] font-semibold text-[#00685F] hover:underline" onclick="openForgotModal()">Forgot Password?</button>
+                </div>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined text-[18px] text-[#5B6E6A] absolute left-3.5 pointer-events-none">lock</span>
+                  <input class="w-full text-sm pl-10 pr-10 py-3 rounded-xl border border-[#D5E4E0] bg-[#FAFCFB] focus:outline-none focus:border-[#00685F] focus:ring-1 focus:ring-[#00685F] text-[#0F172A] placeholder:text-slate-400 transition-all" id="login-password-input" placeholder="••••••••••••" required="" type="password" value="academicPass@2025"/>
+                  <button class="absolute right-3.5 text-slate-400 hover:text-slate-600 focus:outline-none" onclick="togglePasswordVisibility()" type="button">
+                    <span class="material-symbols-outlined text-[18px]" id="toggle-password-icon">visibility</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Remember & Security note -->
+              <div class="flex items-center justify-between pt-1">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input checked="" id="remember-me-checkbox" class="w-4 h-4 rounded text-[#00685F] focus:ring-[#00685F] border-[#D5E4E0]" type="checkbox"/>
+                  <span class="text-xs text-[#5B6E6A] font-medium">Remember this device</span>
+                </label>
+                <span class="text-[11px] text-[#5B6E6A]/80 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[13px] text-[#00685F]">shield</span> 256-bit SSL
+                </span>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="pt-3">
+                <button class="w-full py-3 px-6 rounded-xl text-sm font-semibold bg-[#00685F] text-white hover:bg-[#00554E] active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 shadow-sm shadow-[#00685F]/25 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed" id="login-submit-btn" type="submit">
+                  <span id="login-btn-text">Continue to Student Dashboard</span>
+                  <span class="material-symbols-outlined text-[18px]" id="login-btn-icon">arrow_forward</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Institutional Help / Bottom Notice -->
+          <div class="mt-8 pt-6 border-t border-[#F2F7F5] flex items-center justify-between text-xs text-[#5B6E6A]">
+            <span>Need login credentials?</span>
+            <button onclick="openSupportModal()" class="font-semibold text-[#00685F] hover:underline flex items-center gap-1 cursor-pointer">
+              <span>Contact Academic Cell</span>
+              <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Ultra-Clean, Minimal Footer -->
+  <footer class="relative z-10 w-full py-7 px-6 border-t border-[#00685F]/10 text-center flex flex-col sm:flex-row items-center justify-between gap-4 max-w-6xl mx-auto">
+    <div class="text-xs text-[#5B6E6A] font-medium">
+      M&amp;M — Mentor–Mentee Student Progress Management System
+    </div>
+    <div class="flex items-center gap-4 text-xs text-[#5B6E6A]/80">
+      <span>© 2026 All rights reserved</span>
+      <span>•</span>
+      <span class="flex items-center gap-1">
+        <span class="material-symbols-outlined text-[14px] text-[#00685F]">lock</span>
+        Secure Academic Portal
+      </span>
+    </div>
+  </footer>
+
+  <!-- Generic Modal (For Forgot Password & Academic Support) -->
+  <div id="general-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-[#E2ECE9] shadow-2xl relative">
+      <button onclick="closeModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div class="w-12 h-12 rounded-2xl bg-[#E8F5F2] text-[#00685F] flex items-center justify-center mb-5" id="modal-icon-box">
+        <span class="material-symbols-outlined text-[24px]" id="modal-icon">support_agent</span>
+      </div>
+      <h3 class="text-xl font-serif font-medium text-[#0F172A] mb-2" id="modal-title">Academic Cell Support</h3>
+      <p class="text-xs text-[#5B6E6A] leading-relaxed mb-6" id="modal-body">
+        For password resets, portal access, or role discrepancies, contact the Academic Affairs Cell:
+      </p>
+      <div id="modal-extra-content" class="mb-6"></div>
+      <div class="flex justify-end gap-3">
+        <button onclick="closeModal()" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#00685F] text-white hover:bg-[#00554E] transition-colors">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ROLE_CONFIG = {
+      'Student': {
+        label: 'University Roll No. or Campus Email',
+        placeholder: 'e.g. 1CR21CS042 or student@college.edu',
+        defaultVal: '1CR21CS042',
+        heading: 'Student Sign In',
+        subheading: 'Access your coursework, mentor evaluations, and academic milestones.',
+        icon: 'school',
+        btnText: 'Continue to Student Dashboard',
+        badge: 'Student View'
+      },
+      'Faculty': {
+        label: 'Institutional Faculty Email',
+        placeholder: 'e.g. prof.rajesh@college.edu',
+        defaultVal: 'dr.sharma@niet.edu',
+        heading: 'Faculty & Mentor Sign In',
+        subheading: 'Review assigned mentees, track meeting logs, and submit quarterly reports.',
+        icon: 'supervisor_account',
+        btnText: 'Continue to Faculty Portal',
+        badge: 'Faculty View'
+      }
+    };
+
+    let currentRole = 'Student';
+
+    function showView(viewName, role = 'Student') {
+      const viewRoles = document.getElementById('view-role-selection');
+      const viewLogin = document.getElementById('view-split-login');
+      const btnRoles = document.getElementById('nav-btn-roles');
+      const btnLogin = document.getElementById('nav-btn-login');
+      const badge = document.getElementById('active-role-badge');
+      clearAlert();
+
+      if (viewName === 'roles') {
+        viewRoles.classList.remove('hidden');
+        viewLogin.classList.add('hidden');
+
+        btnRoles.className = 'px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 bg-[#00685F] text-white shadow-sm flex items-center gap-1.5';
+        btnLogin.className = 'px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 text-[#5B6E6A] hover:text-[#00685F] flex items-center gap-1.5';
+        badge.classList.add('hidden');
+        badge.classList.remove('flex');
+      } else {
+        viewRoles.classList.add('hidden');
+        viewLogin.classList.remove('hidden');
+
+        btnLogin.className = 'px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 bg-[#00685F] text-white shadow-sm flex items-center gap-1.5';
+        btnRoles.className = 'px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 text-[#5B6E6A] hover:text-[#00685F] flex items-center gap-1.5';
+        badge.classList.remove('hidden');
+        badge.classList.add('flex');
+        
+        switchRole(role);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchRole(role) {
+      currentRole = role;
+      clearAlert();
+      const conf = ROLE_CONFIG[role] || ROLE_CONFIG['Student'];
+
+      // Update form labels & content
+      document.getElementById('login-heading').innerText = conf.heading;
+      document.getElementById('login-subheading').innerText = conf.subheading;
+      document.getElementById('login-id-label').innerText = conf.label;
+      document.getElementById('login-id-input').placeholder = conf.placeholder;
+      document.getElementById('login-id-input').value = conf.defaultVal;
+      document.getElementById('login-role-icon').innerText = conf.icon;
+      document.getElementById('login-btn-text').innerText = conf.btnText;
+      document.getElementById('active-role-text').innerText = conf.badge;
+
+      // Update tab pills
+      const tabStudent = document.getElementById('tab-student');
+      const tabFaculty = document.getElementById('tab-faculty');
+
+      const activeClass = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 bg-[#00685F] text-white shadow-sm';
+      const inactiveClass = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 text-[#5B6E6A] hover:text-[#00685F]';
+
+      tabStudent.className = role === 'Student' ? activeClass : inactiveClass;
+      tabFaculty.className = role === 'Faculty' ? activeClass : inactiveClass;
+    }
+
+    function togglePasswordVisibility() {
+      const pwd = document.getElementById('login-password-input');
+      const icon = document.getElementById('toggle-password-icon');
+      if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.innerText = 'visibility_off';
+      } else {
+        pwd.type = 'password';
+        icon.innerText = 'visibility';
+      }
+    }
+
+    function showAlert(type, message) {
+      const alertBox = document.getElementById('login-alert-box');
+      const alertIcon = document.getElementById('login-alert-icon');
+      const alertMsg = document.getElementById('login-alert-message');
+
+      alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'border-red-200', 'bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+      alertBox.classList.add('flex');
+
+      if (type === 'error') {
+        alertBox.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
+        alertIcon.innerText = 'error';
+      } else {
+        alertBox.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+        alertIcon.innerText = 'check_circle';
+      }
+      alertMsg.innerText = message;
+    }
+
+    function clearAlert() {
+      const alertBox = document.getElementById('login-alert-box');
+      alertBox.classList.add('hidden');
+      alertBox.classList.remove('flex');
+    }
+
+    async function submitLogin() {
+      const btn = document.getElementById('login-submit-btn');
+      const text = document.getElementById('login-btn-text');
+      const icon = document.getElementById('login-btn-icon');
+      const identifier = document.getElementById('login-id-input').value.trim();
+      const password = document.getElementById('login-password-input').value;
+      const rememberMe = document.getElementById('remember-me-checkbox').checked;
+
+      clearAlert();
+
+      if (!identifier || !password) {
+        showAlert('error', 'Please fill in both identification and password.');
+        return;
+      }
+
+      btn.disabled = true;
+      text.innerText = 'Verifying credentials...';
+      icon.innerText = 'sync';
+      icon.classList.add('animate-spin');
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            identifier,
+            password,
+            role: currentRole,
+            rememberMe
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          icon.classList.remove('animate-spin');
+          icon.innerText = 'check_circle';
+          text.innerText = `Authenticated! Loading dashboard...`;
+          showAlert('success', `Welcome, ${data.user.name}! Redirecting...`);
+
+          // Save auth state
+          if (rememberMe) {
+            localStorage.setItem('mm_token', data.token);
+            localStorage.setItem('mm_user', JSON.stringify(data.user));
+          } else {
+            sessionStorage.setItem('mm_token', data.token);
+            sessionStorage.setItem('mm_user', JSON.stringify(data.user));
+          }
+
+          setTimeout(() => {
+            window.location.href = data.redirectUrl;
+          }, 800);
+        } else {
+          icon.classList.remove('animate-spin');
+          icon.innerText = 'arrow_forward';
+          btn.disabled = false;
+          text.innerText = ROLE_CONFIG[currentRole].btnText;
+          showAlert('error', data.message || 'Authentication failed. Please verify credentials.');
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+        icon.classList.remove('animate-spin');
+        icon.innerText = 'arrow_forward';
+        btn.disabled = false;
+        text.innerText = ROLE_CONFIG[currentRole].btnText;
+        showAlert('error', 'Network error or backend is not reachable at /api/auth/login.');
+      }
+    }
+
+    // Modal controls
+    function closeModal() {
+      document.getElementById('general-modal').classList.add('hidden');
+      document.getElementById('general-modal').classList.remove('flex');
+    }
+
+    function openSupportModal() {
+      document.getElementById('modal-icon').innerText = 'support_agent';
+      document.getElementById('modal-title').innerText = 'Academic Affairs Helpdesk';
+      document.getElementById('modal-body').innerText = 'Need credentials or technical assistance? You can reach out directly:';
+      document.getElementById('modal-extra-content').innerHTML = `
+        <div class="bg-[#F0F7F5] p-3.5 rounded-2xl border border-[#D5E4E0] text-xs space-y-2 text-[#0F172A]">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px] text-[#00685F]">mail</span>
+            <span>academic.cell@niet.edu</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px] text-[#00685F]">call</span>
+            <span>+91 120 400 5000 (Ext. 204)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px] text-[#00685F]">schedule</span>
+            <span>Mon–Fri: 9:00 AM – 5:00 PM</span>
+          </div>
+        </div>
+      `;
+      document.getElementById('general-modal').classList.remove('hidden');
+      document.getElementById('general-modal').classList.add('flex');
+    }
+
+    async function openForgotModal() {
+      const identifier = document.getElementById('login-id-input').value.trim();
+      document.getElementById('modal-icon').innerText = 'lock_reset';
+      document.getElementById('modal-title').innerText = 'Password Recovery';
+      document.getElementById('modal-body').innerText = 'Enter your University Roll Number or Faculty Email below to receive a password reset link:';
+      document.getElementById('modal-extra-content').innerHTML = `
+        <div class="space-y-3">
+          <input id="forgot-id-input" value="${identifier}" placeholder="e.g. 1CR21CS042 or dr.sharma@niet.edu" class="w-full text-xs p-3 rounded-xl border border-[#D5E4E0] focus:ring-1 focus:ring-[#00685F] focus:outline-none"/>
+          <button onclick="submitForgotPassword()" class="w-full py-2.5 rounded-xl text-xs font-semibold bg-[#00685F] text-white hover:bg-[#00554E] transition-all">Send Reset Instructions</button>
+          <div id="forgot-result-box" class="hidden text-xs p-2.5 rounded-xl"></div>
+        </div>
+      `;
+      document.getElementById('general-modal').classList.remove('hidden');
+      document.getElementById('general-modal').classList.add('flex');
+    }
+
+    async function submitForgotPassword() {
+      const val = document.getElementById('forgot-id-input').value.trim();
+      const resBox = document.getElementById('forgot-result-box');
+      if (!val) {
+        resBox.className = 'text-xs p-2.5 rounded-xl bg-red-50 text-red-700 border border-red-200 block';
+        resBox.innerText = 'Please enter your registered ID or email.';
+        return;
+      }
+      try {
+        const res = await fetch('/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier: val })
+        });
+        const data = await res.json();
+        resBox.className = 'text-xs p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 block';
+        resBox.innerText = data.message || 'Reset instructions sent.';
+      } catch (err) {
+        resBox.className = 'text-xs p-2.5 rounded-xl bg-red-50 text-red-700 border border-red-200 block';
+        resBox.innerText = 'Unable to send reset request right now.';
+      }
+    }
+  </script>
+</body>
+</html>
